@@ -2,7 +2,7 @@
   --bg: #EAF6F2;
   --card: #ffffff;
   --accent: #6ec3a6;
-  --accent-2: #4aa08b;
+  --accent-2: #357e67;
   --muted: #6b7276;
   --radius: 12px;
 }
@@ -26,8 +26,14 @@ body{
   padding:28px;
   box-shadow:0 8px 24px rgba(3,48,30,0.08);
 }
-h1{margin:0 0 6px;font-size:20px}
-.subtitle{margin:0 0 18px;color:var(--muted)}
+.logo-text{
+  text-align:center;
+  font-size:24px;
+  font-weight:700;
+  color:var(--accent-2);
+  margin-bottom:8px;
+}
+.subtitle{margin:0 0 18px;color:var(--muted);text-align:center}
 label{display:block;margin:10px 0 6px;font-size:13px;color:var(--muted)}
 input#inputUrl, textarea#output{
   width:100%;
@@ -40,7 +46,7 @@ input#inputUrl, textarea#output{
   background:#fbfffc;
 }
 textarea#output{min-height:72px}
-.row{display:flex;gap:10px;margin-top:12px;align-items:center}
+.row{display:flex;gap:10px;margin-top:12px;align-items:center;justify-content:center}
 .row.small{margin-top:16px}
 button{
   padding:10px 14px;

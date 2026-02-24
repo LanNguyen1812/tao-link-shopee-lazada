@@ -2,7 +2,7 @@
 const CONFIG = {
   shopee: { enabled: true, param: 'af_id', id: '17351700112' },
   lazada: { enabled: true, param: 'aff_id', id: '218701259' },
-  tiki: { enabled: false, param: 'affiliate_id', id: '' } // để sau nếu cần
+  tiki: { enabled: false, param: 'affiliate_id', id: '' }
 };
 
 const el = {
@@ -21,7 +21,6 @@ const el = {
 el.shopeeId.textContent = CONFIG.shopee.id;
 el.lazadaId.textContent = CONFIG.lazada.id;
 
-// Utility: ensure URL has protocol
 function normalizeUrl(url){
   url = url.trim();
   if(!/^https?:\/\//i.test(url)){
@@ -30,29 +29,24 @@ function normalizeUrl(url){
   return url;
 }
 
-// Detect platform
 function detectPlatform(url){
   const u = url.toLowerCase();
   if(u.includes('shopee.') || u.includes('shp.ee')) return 'shopee';
   if(u.includes('lazada.') || u.includes('lzd.co')) return 'lazada';
-  if(u.includes('tiki.') ) return 'tiki';
+  if(u.includes('tiki.')) return 'tiki';
   return null;
 }
 
-// Add query param safely
 function addParam(url, key, value){
   try{
     const urlObj = new URL(url);
-    // do not overwrite if same key exists
     if(!urlObj.searchParams.has(key)){
       urlObj.searchParams.append(key, value);
     } else {
-      // if exists, replace
       urlObj.searchParams.set(key, value);
     }
     return urlObj.toString();
   } catch(e){
-    // fallback simple concat
     const sep = url.includes('?') ? '&' : '?';
     return url + sep + encodeURIComponent(key) + '=' + encodeURIComponent(value);
   }
@@ -64,7 +58,6 @@ function generateAffiliate(url){
   if(!platform) throw new Error('Không nhận diện được sàn (Chỉ hỗ trợ Shopee & Lazada).');
   const cfg = CONFIG[platform];
   if(!cfg || !cfg.enabled || !cfg.id) throw new Error('Affiliate ID chưa được cấu hình cho sàn này.');
-  // Special handling for some short links: for lzd.co or shp.ee we still append param to expanded url
   return addParam(url, cfg.param, cfg.id);
 }
 
@@ -107,7 +100,6 @@ el.btnOpen.addEventListener('click', ()=>{
   if(u) window.open(u, '_blank');
 });
 
-// Simple share handlers
 el.shareFb.addEventListener('click', ()=>{
   const u = encodeURIComponent(el.output.value || '');
   if(!u) return;
@@ -123,7 +115,6 @@ el.shareMessenger.addEventListener('click', ()=>{
 el.shareZalo.addEventListener('click', ()=>{
   const u = encodeURIComponent(el.output.value || '');
   if(!u) return;
-  // Zalo share via web requires zalo sdk; use fallback link to zalo.me (note: may open app)
   const zalo = 'https://zalo.me/share?url=' + u;
   window.open(zalo, '_blank');
 });
