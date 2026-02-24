@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tạo link Shopee - Lazada</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1> Tạo link Shopee - Lazada </h1>
+    <p class="subtitle">Dán link sản phẩm Shopee hoặc Lazada vào ô bên dưới — hệ thống sẽ tự gắn affiliate ID của bạn.</p>
+
+    <label for="inputUrl">Link sản phẩm</label>
+    <input id="inputUrl" placeholder="Dán link Shopee hoặc Lazada ở đây..." />
+
+    <div class="row">
+      <button id="btnGenerate">Tạo Link Ngay</button>
+      <button id="btnCopy" class="outline" disabled>Sao chép</button>
+      <button id="btnOpen" class="outline" disabled>Mở link</button>
+    </div>
+
+    <label for="output">Link Affiliate</label>
+    <textarea id="output" readonly placeholder="Link sẽ hiện ở đây..."></textarea>
+
+    <div class="share row small">
+      <button id="shareFb" class="link" disabled>Chia sẻ Facebook</button>
+      <button id="shareZalo" class="link" disabled>Chia sẻ Zalo</button>
+      <button id="shareMessenger" class="link" disabled>Chia sẻ Messenger</button>
+    </div>
+
+    <footer>
+      <small>Powered by Tạo link Shopee - Lazada • Shopee ID: <strong id="shopeeId">17351700112</strong> • Lazada ID: <strong id="lazadaId">218701259</strong></small>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

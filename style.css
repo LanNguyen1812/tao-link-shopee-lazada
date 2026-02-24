@@ -1,0 +1,61 @@
+:root{
+  --bg: #EAF6F2;
+  --card: #ffffff;
+  --accent: #6ec3a6;
+  --accent-2: #4aa08b;
+  --muted: #6b7276;
+  --radius: 12px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:linear-gradient(180deg,var(--bg),#f6fbf9);
+  color:#013220;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+.container{
+  width:100%;
+  max-width:760px;
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:28px;
+  box-shadow:0 8px 24px rgba(3,48,30,0.08);
+}
+h1{margin:0 0 6px;font-size:20px}
+.subtitle{margin:0 0 18px;color:var(--muted)}
+label{display:block;margin:10px 0 6px;font-size:13px;color:var(--muted)}
+input#inputUrl, textarea#output{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #dfeee8;
+  font-size:14px;
+  outline:none;
+  resize:vertical;
+  background:#fbfffc;
+}
+textarea#output{min-height:72px}
+.row{display:flex;gap:10px;margin-top:12px;align-items:center}
+.row.small{margin-top:16px}
+button{
+  padding:10px 14px;
+  border-radius:10px;
+  border:0;
+  background:var(--accent);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(78,162,139,0.12);
+}
+button.outline{background:transparent;color:var(--accent-2);border:1px solid rgba(74,160,139,0.12)}
+button.link{background:transparent;color:var(--accent-2);border:0;text-decoration:underline;padding:6px 8px}
+button:disabled{opacity:0.55;cursor:not-allowed}
+footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:560px){
+  .row{flex-direction:column}
+}
