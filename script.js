@@ -4,18 +4,24 @@ const LAZADA_ID = "218701259";
 // ✅ Mở rộng link Shopee rút gọn (hỗ trợ s.shopee.vn, shp.ee, shp.sh)
 async function expandShopeeLink(shortUrl) {
   try {
-    // Thử mở bằng TinyURL API
-    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(shortUrl)}`);
-    const result = await res.text();
-    if (result.includes("shopee.vn")) return result;
-
-    // Nếu không thành công, fallback qua shrtco
-    const res2 = await fetch(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(shortUrl)}`);
-    const data2 = await res2.json();
-    if (data2?.result?.original_link?.includes("shopee.vn")) return data2.result.original_link;
+    // Bước 1: thử mở redirect qua API của allorigins
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(shortUrl)}`);
+    const data = await res.json();
+    const match = data.contents.match(/https:\/\/shopee\.vn\/[^\s"']+/);
+    if (match) return match[0];
   } catch (e) {
-    console.warn("Expand fail:", e);
+    console.warn("expandShopeeLink fail 1:", e);
   }
+
+  try {
+    // Bước 2: fallback dùng TinyURL để ép mở redirect
+    const res2 = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(shortUrl)}`);
+    const text = await res2.text();
+    if (text.includes("shopee.vn")) return text;
+  } catch (e) {
+    console.warn("expandShopeeLink fail 2:", e);
+  }
+
   return shortUrl;
 }
 
