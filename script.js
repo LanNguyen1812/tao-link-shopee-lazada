@@ -40,7 +40,7 @@ el.themeToggle.addEventListener('click', ()=>{
   setTheme(cur === 'dark' ? 'light' : 'dark');
 });
 
-// Core
+// Core affiliate
 function normalizeUrl(url){
   url = url.trim();
   if(!/^https?:\\/\\//i.test(url)) url = 'https://' + url;
@@ -87,12 +87,47 @@ function renderCounter(){
 }
 renderCounter();
 
-// Actions
-el.btnGenerate.addEventListener('click',()=>{
-  const val=el.input.value.trim();if(!val)return alert('Vui lòng dán link');
-  try{const aff=generateAffiliate(val);el.output.value=aff;setBtns(true);incCounter();}
-  catch(e){alert(e.message);setBtns(false);el.output.value='';}
+// === TinyURL Shortener ===
+async function shortenTinyURL(url){
+  try{
+    const res = await fetch(`https://api.tinyurl.com/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer 00f7a5b2a8c12a97d9f98cb6fd2f77b5' // public demo token
+      },
+      body: JSON.stringify({ url })
+    });
+    if(!res.ok) throw new Error('TinyURL lỗi kết nối');
+    const data = await res.json();
+    return data.data.tiny_url || url;
+  }catch(e){
+    console.error(e);
+    return url;
+  }
+}
+
+// Generate button with TinyURL shortening
+el.btnGenerate.addEventListener('click', async ()=>{
+  const val = el.input.value.trim();
+  if(!val){
+    alert('Vui lòng dán link sản phẩm Shopee hoặc Lazada.');
+    return;
+  }
+  try{
+    const aff = generateAffiliate(val);
+    const short = await shortenTinyURL(aff);
+    el.output.value = short || aff;
+    setBtns(true);
+    incCounter();
+  } catch(err){
+    alert(err.message || 'Lỗi khi tạo link.');
+    setBtns(false);
+    el.output.value = '';
+  }
 });
+
+// Buttons and share actions
 function setBtns(s){
   el.btnCopy.disabled=!s;el.btnOpen.disabled=!s;
   el.shareFb.disabled=!s;el.shareZalo.disabled=!s;el.shareMessenger.disabled=!s;
