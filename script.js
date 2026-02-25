@@ -1,7 +1,7 @@
 const SHOPEE_ID = "17351700112";
 const LAZADA_ID = "218701259";
 
-// ✅ Hàm mở rộng link Shopee rút gọn (qua API is.gd để né CORS)
+// ✅ Mở rộng link Shopee (qua is.gd để né CORS)
 async function expandShopeeLink(shortUrl) {
   try {
     const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(shortUrl)}`);
@@ -12,7 +12,7 @@ async function expandShopeeLink(shortUrl) {
   }
 }
 
-// ✅ Hàm rút gọn TinyURL
+// ✅ Rút gọn link bằng is.gd
 async function shortenTiny(url) {
   try {
     const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`);
@@ -23,7 +23,7 @@ async function shortenTiny(url) {
   }
 }
 
-// ✅ Xóa param affiliate cũ
+// ✅ Xóa aff cũ
 function cleanAffiliateParams(url) {
   try {
     const u = new URL(url);
@@ -34,7 +34,7 @@ function cleanAffiliateParams(url) {
   }
 }
 
-// ✅ Thêm aff_id mới
+// ✅ Thêm aff ID mới
 async function processUrl(url) {
   let newUrl = cleanAffiliateParams(url);
 
@@ -59,7 +59,7 @@ async function processUrl(url) {
   return await shortenTiny(newUrl);
 }
 
-// ✅ Xử lý toàn bộ văn bản
+// ✅ Xử lý toàn bộ đoạn text
 async function generateLinks() {
   const input = document.getElementById("input").value.trim();
   const output = document.getElementById("output");
@@ -83,7 +83,7 @@ async function generateLinks() {
   output.value = results.join("\n");
 }
 
-// ✅ Copy kết quả
+// ✅ Copy
 function copyResult() {
   const output = document.getElementById("output");
   output.select();
