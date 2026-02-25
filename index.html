@@ -3,41 +3,68 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tạo link Shopee - Lazada</title>
+  <title>Tạo link Shopee - Lazada - Tiki - TikTok</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔗</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+
   <main class="container">
-    <div class="logo-text">🔗 Tạo link Shopee - Lazada</div>
-    <div class="slogan">Công cụ tạo link affiliate nhanh và tự động nhất!</div>
-    <p class="subtitle">Dán link sản phẩm Shopee hoặc Lazada vào ô bên dưới để tạo link nhận mã giảm giá.</p>
-
-    <label for="inputUrl">Link sản phẩm</label>
-    <input id="inputUrl" placeholder="Dán link Shopee hoặc Lazada ở đây..." />
-
-    <div class="row">
-      <button id="btnGenerate">Tạo Link Ngay</button>
-      <button id="btnCopy" class="outline" disabled>Sao chép</button>
-      <button id="btnOpen" class="outline" disabled>Mở link</button>
+    <div class="header-row">
+      <div class="logo-text">🔗 Tạo link Shopee - Lazada - Tiki - TikTok</div>
+      <div class="platform-badges" id="badges">
+        <!-- dynamic badges -->
+      </div>
     </div>
 
-    <label for="output">Link Affiliate</label>
-    <textarea id="output" readonly placeholder="Link sẽ hiện ở đây..."></textarea>
+    <div class="slogan">Công cụ tạo link affiliate nhanh, tạo nhiều link & giữ nguyên mô tả.</div>
+    <p class="subtitle">Dán văn bản (nhiều dòng) chứa mô tả + link sản phẩm (mỗi link trên 1 dòng hoặc xen kẽ trong câu). Hệ thống sẽ tự phát hiện và tạo link affiliate rút gọn.</p>
 
-    <div class="share row small">
-      <button id="shareFb" class="link" disabled>Chia sẻ Facebook</button>
-      <button id="shareZalo" class="link" disabled>Chia sẻ Zalo</button>
-      <button id="shareMessenger" class="link" disabled>Chia sẻ Messenger</button>
+    <label for="multiInput">Nội dung (hỗ trợ nhiều dòng)</label>
+    <textarea id="multiInput" placeholder="Ví dụ:
+🔥 Shopee xử lý: https://shopee.vn/xxx
+9H - Canh back voucher 50% ... https://shopee.vn/yyy
+🔥 Lazada: https://www.lazada.vn/zzz"></textarea>
+
+    <div class="controls-row">
+      <div class="left">
+        <label class="toggle"><input type="checkbox" id="useTiny" checked> Rút gọn TinyURL</label>
+        <label class="toggle"><input type="checkbox" id="autoCopy" checked> Tự copy kết quả</label>
+      </div>
+      <div class="right">
+        <button id="btnGenerate" class="primary">Tạo Link Ngay</button>
+        <button id="btnPreview" class="outline">Xem trước</button>
+      </div>
     </div>
 
-    <div class="counter" id="counter">Bạn đã tạo 0 link hôm nay 🔗</div>
+    <div class="config-row">
+      <div class="cfg">
+        <div class="cfg-title">Affiliate IDs (có thể chỉnh):</div>
+        <div class="cfg-grid">
+          <div><label>Shopee ID</label><input id="cfgShopee" value="17351700112"></div>
+          <div><label>Lazada ID</label><input id="cfgLazada" value="218701259"></div>
+          <div><label>Tiki ID</label><input id="cfgTiki" placeholder="(nếu có)"></div>
+          <div><label>TikTok ID</label><input id="cfgTiktok" placeholder="(nếu có)"></div>
+        </div>
+      </div>
+    </div>
+
+    <label for="result">Kết quả</label>
+    <textarea id="result" readonly placeholder="Kết quả sẽ hiển thị ở đây..."></textarea>
+
+    <div class="action-row">
+      <button id="btnCopyResult" class="outline" disabled>Sao chép kết quả</button>
+      <button id="btnClear" class="outline">Xóa</button>
+      <div class="status" id="status">Bạn đã tạo 0 link hôm nay 🔗</div>
+    </div>
 
     <footer>
-      <small>Powered by Tạo link Shopee - Lazada • Shopee ID: <strong id="shopeeId">17351700112</strong> • Lazada ID: <strong id="lazadaId">218701259</strong></small>
+      <small>Powered by Tạo link • Shopee ID: <strong id="shopeeId">17351700112</strong> • Lazada ID: <strong id="lazadaId">218701259</strong></small>
     </footer>
+
   </main>
+
   <script src="script.js"></script>
 </body>
 </html>
