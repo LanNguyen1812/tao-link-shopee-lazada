@@ -90,3 +90,7 @@ footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
   .cfg-grid{grid-template-columns:repeat(1,1fr)}
   .controls-row{flex-direction:column;align-items:stretch}
 }
+/* Ẩn phần cấu hình Affiliate IDs */
+.config-row {
+  display: none !important;
+}
