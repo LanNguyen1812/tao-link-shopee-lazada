@@ -93,9 +93,8 @@
   <script>
     const shopeeId = "17351700112";
     const lazadaId = "218701259";
-    const tikiId = "";
-    const tiktokId = "";
 
+    // Mở rộng link Shopee rút gọn
     async function expandShopeeLink(shortUrl) {
       try {
         const res = await fetch(shortUrl, { method: "HEAD", redirect: "follow" });
@@ -105,19 +104,17 @@
       }
     }
 
+    // Rút gọn link TinyURL
     async function shortenTiny(url) {
       try {
-        const res = await fetch(
-          "https://api.tinyurl.com/create",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer 1", // dùng API free của TinyURL
-            },
-            body: JSON.stringify({ url }),
-          }
-        );
+        const res = await fetch("https://api.tinyurl.com/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer 1"
+          },
+          body: JSON.stringify({ url })
+        });
         const data = await res.json();
         return data.data?.tiny_url || url;
       } catch {
@@ -125,39 +122,43 @@
       }
     }
 
+    // Làm sạch và thay affiliate ID
+    function cleanAffiliateParams(url) {
+      try {
+        const u = new URL(url);
+        u.searchParams.delete("af_id");
+        u.searchParams.delete("aff_id");
+        u.searchParams.delete("utm_source");
+        u.searchParams.delete("utm_medium");
+        u.searchParams.delete("utm_campaign");
+        return u.toString().replace(/(\?|&)$/, "");
+      } catch {
+        return url;
+      }
+    }
+
     async function processUrl(url) {
-      let newUrl = url;
+      let newUrl = cleanAffiliateParams(url);
 
       // Shopee rút gọn
-      if (url.includes("s.shopee.vn") || url.includes("shp.ee")) {
-        const expanded = await expandShopeeLink(url);
+      if (newUrl.includes("s.shopee.vn") || newUrl.includes("shp.ee")) {
+        const expanded = await expandShopeeLink(newUrl);
+        newUrl = cleanAffiliateParams(expanded);
         newUrl = expanded.includes("?")
-          ? `${expanded}&af_id=${shopeeId}`
-          : `${expanded}?af_id=${shopeeId}`;
+          ? `${newUrl}&af_id=${shopeeId}`
+          : `${newUrl}?af_id=${shopeeId}`;
       }
       // Shopee gốc
-      else if (url.includes("shopee.vn")) {
-        newUrl = url.includes("?")
-          ? `${url}&af_id=${shopeeId}`
-          : `${url}?af_id=${shopeeId}`;
+      else if (newUrl.includes("shopee.vn")) {
+        newUrl = newUrl.includes("?")
+          ? `${newUrl}&af_id=${shopeeId}`
+          : `${newUrl}?af_id=${shopeeId}`;
       }
       // Lazada
-      else if (url.includes("lazada.vn")) {
-        newUrl = url.includes("?")
-          ? `${url}&aff_id=${lazadaId}`
-          : `${url}?aff_id=${lazadaId}`;
-      }
-      // Tiki
-      else if (url.includes("tiki.vn")) {
-        newUrl = url.includes("?")
-          ? `${url}&aff_id=${tikiId}`
-          : `${url}?aff_id=${tikiId}`;
-      }
-      // TikTok
-      else if (url.includes("tiktok.com")) {
-        newUrl = url.includes("?")
-          ? `${url}&aff_id=${tiktokId}`
-          : `${url}?aff_id=${tiktokId}`;
+      else if (newUrl.includes("lazada.vn")) {
+        newUrl = newUrl.includes("?")
+          ? `${newUrl}&aff_id=${lazadaId}`
+          : `${newUrl}?aff_id=${lazadaId}`;
       }
 
       return await shortenTiny(newUrl);
@@ -179,8 +180,8 @@
         }
 
         const url = match[0];
-        const shortLink = await processUrl(url);
-        results.push(line.replace(url, shortLink));
+        const newLink = await processUrl(url);
+        results.push(line.replace(url, newLink));
       }
 
       output.value = results.join("\n");
