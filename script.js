@@ -1,4 +1,6 @@
-// Cấu hình Affiliate ID
+// ========================
+// CẤU HÌNH AFFILIATE ID
+// ========================
 const CONFIG = {
   shopee: { enabled: true, param: 'af_id', id: '17351700112' },
   lazada: { enabled: true, param: 'aff_id', id: '218701259' }
@@ -15,36 +17,15 @@ const el = {
   shareMessenger: document.getElementById('shareMessenger'),
   shopeeId: document.getElementById('shopeeId'),
   lazadaId: document.getElementById('lazadaId'),
-  counter: document.getElementById('counter'),
-  themeToggle: document.getElementById('themeToggle')
+  counter: document.getElementById('counter')
 };
 
 if (el.shopeeId) el.shopeeId.textContent = CONFIG.shopee.id;
 if (el.lazadaId) el.lazadaId.textContent = CONFIG.lazada.id;
 
-// ====== Theme Toggle ======
-function setTheme(theme) {
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-    el.themeToggle.textContent = '☀️';
-  } else {
-    document.documentElement.classList.remove('dark');
-    el.themeToggle.textContent = '🌙';
-  }
-  localStorage.setItem('aff_theme', theme);
-}
-
-const savedTheme =
-  localStorage.getItem('aff_theme') ||
-  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-setTheme(savedTheme);
-
-el.themeToggle.addEventListener('click', () => {
-  const cur = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-  setTheme(cur === 'dark' ? 'light' : 'dark');
-});
-
-// ====== Core Functions ======
+// ========================
+// HÀM HỖ TRỢ
+// ========================
 function normalizeUrl(url) {
   url = url.trim();
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
@@ -70,93 +51,94 @@ function addParam(url, key, value) {
 
 function generateAffiliate(url) {
   url = normalizeUrl(url);
-  const p = detectPlatform(url);
-  if (!p) throw new Error('Chỉ hỗ trợ Shopee hoặc Lazada');
-  const c = CONFIG[p];
-  return addParam(url, c.param, c.id);
+  const platform = detectPlatform(url);
+  if (!platform) throw new Error('Chỉ hỗ trợ link Shopee hoặc Lazada');
+  const cfg = CONFIG[platform];
+  return addParam(url, cfg.param, cfg.id);
 }
 
-// ====== Counter ======
+// ========================
+// BỘ ĐẾM LINK TẠO HÔM NAY
+// ========================
 function getCounter() {
   const raw = localStorage.getItem('aff_counter');
-  const d = new Date().toISOString().slice(0, 10);
-  let c = { date: d, count: 0 };
+  const today = new Date().toISOString().slice(0, 10);
+  let data = { date: today, count: 0 };
   if (raw) {
     try {
-      c = JSON.parse(raw);
+      data = JSON.parse(raw);
     } catch {}
-    if (c.date !== d) {
-      c = { date: d, count: 0 };
-    }
+    if (data.date !== today) data = { date: today, count: 0 };
   }
-  return c;
+  return data;
 }
-
-function saveCounter(c) {
-  localStorage.setItem('aff_counter', JSON.stringify(c));
+function saveCounter(data) {
+  localStorage.setItem('aff_counter', JSON.stringify(data));
 }
-
 function incCounter() {
-  let c = getCounter();
+  const c = getCounter();
   c.count++;
   saveCounter(c);
   renderCounter();
 }
-
 function renderCounter() {
-  let c = getCounter();
+  const c = getCounter();
   el.counter.textContent = `Bạn đã tạo ${c.count} link hôm nay 🔗`;
 }
 renderCounter();
 
-// ====== TinyURL Shortener (public API, không cần token) ======
+// ========================
+// RÚT GỌN LINK VỚI TINYURL
+// ========================
 async function shortenTinyURL(url) {
   try {
     const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
-    if (!res.ok) throw new Error('TinyURL lỗi kết nối');
+    if (!res.ok) throw new Error('TinyURL lỗi');
     const short = await res.text();
     return short.startsWith('http') ? short : url;
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error('TinyURL Error:', err);
     return url;
   }
 }
 
-// ====== Main Button ======
+// ========================
+// XỬ LÝ SỰ KIỆN
+// ========================
 el.btnGenerate.addEventListener('click', async () => {
-  const val = el.input.value.trim();
-  if (!val) {
+  const inputUrl = el.input.value.trim();
+  if (!inputUrl) {
     alert('Vui lòng dán link sản phẩm Shopee hoặc Lazada.');
     return;
   }
+
   try {
-    const aff = generateAffiliate(val);
-    const short = await shortenTinyURL(aff);
-    el.output.value = short || aff;
-    setBtns(true);
+    const affUrl = generateAffiliate(inputUrl);
+    const shortUrl = await shortenTinyURL(affUrl);
+    el.output.value = shortUrl || affUrl;
     incCounter();
+    toggleButtons(true);
   } catch (err) {
-    alert(err.message || 'Lỗi khi tạo link.');
-    setBtns(false);
-    el.output.value = '';
+    alert(err.message || 'Lỗi khi tạo link');
+    toggleButtons(false);
   }
 });
 
-// ====== Buttons ======
-function setBtns(s) {
-  el.btnCopy.disabled = !s;
-  el.btnOpen.disabled = !s;
-  el.shareFb.disabled = !s;
-  el.shareZalo.disabled = !s;
-  el.shareMessenger.disabled = !s;
+// ========================
+// NÚT BẤM & CHIA SẺ
+// ========================
+function toggleButtons(enabled) {
+  [el.btnCopy, el.btnOpen, el.shareFb, el.shareZalo, el.shareMessenger].forEach(
+    (btn) => (btn.disabled = !enabled)
+  );
 }
 
 el.btnCopy.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(el.output.value);
-    alert('Đã sao chép!');
+    alert('Đã sao chép link!');
   } catch {
-    alert('Không thể copy tự động');
+    alert('Không thể copy tự động, vui lòng copy thủ công.');
   }
 });
 
@@ -173,7 +155,10 @@ el.shareFb.addEventListener('click', () => {
 el.shareMessenger.addEventListener('click', () => {
   const u = encodeURIComponent(el.output.value);
   if (!u) return;
-  window.open('https://www.facebook.com/dialog/send?link=' + u + '&app_id=266241143963202', '_blank');
+  window.open(
+    'https://www.facebook.com/dialog/send?link=' + u + '&app_id=266241143963202',
+    '_blank'
+  );
 });
 
 el.shareZalo.addEventListener('click', () => {
