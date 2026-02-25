@@ -1,70 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tạo link Shopee - Lazada - Tiki - TikTok</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔗</text></svg>">
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eaf5f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      padding: 28px 32px;
+      width: 90%;
+      max-width: 750px;
+    }
+    h2 {
+      text-align: center;
+      color: #1d6f57;
+      font-size: 1.6rem;
+      margin-top: 0;
+    }
+    textarea {
+      width: 100%;
+      border: 1px solid #cce3dc;
+      border-radius: 10px;
+      padding: 12px;
+      resize: vertical;
+      font-size: 15px;
+      min-height: 120px;
+      background-color: #f6fbf9;
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+    button {
+      background-color: #2e8b69;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #256c51;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 10px 0 6px;
+      color: #1d6f57;
+      text-align: left;
+    }
+    .result {
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
-  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+  <div class="container">
+    <h2>🔗 Tạo link Shopee - Lazada - Tiki - TikTok</h2>
+    <p style="text-align:center; color:#3a3a3a; margin-bottom:20px">
+      Công cụ tạo link affiliate nhanh, hỗ trợ nhiều dòng & giữ nguyên mô tả.
+    </p>
 
-  <main class="container">
-    <div class="header-row">
-      <div class="logo-text">🔗 Tạo link Shopee - Lazada - Tiki - TikTok</div>
-      <div class="platform-badges" id="badges">
-        <!-- dynamic badges -->
-      </div>
+    <label for="input">Nơi dán link của bạn</label>
+    <textarea id="input" placeholder=""></textarea>
+
+    <div class="buttons">
+      <button onclick="generateLinks()">Tạo Link Ngay</button>
+      <button onclick="copyResult()">Sao chép Kết quả</button>
     </div>
 
-    <div class="slogan">Công cụ tạo link affiliate nhanh, tạo nhiều link & giữ nguyên mô tả.</div>
-    <p class="subtitle">Dán văn bản (nhiều dòng) chứa mô tả + link sản phẩm (mỗi link trên 1 dòng hoặc xen kẽ trong câu). Hệ thống sẽ tự phát hiện và tạo link affiliate rút gọn.</p>
-
-    <label for="multiInput">Nội dung (hỗ trợ nhiều dòng)</label>
-    <textarea id="multiInput" placeholder="Ví dụ:
-🔥 Shopee xử lý: https://shopee.vn/xxx
-9H - Canh back voucher 50% ... https://shopee.vn/yyy
-🔥 Lazada: https://www.lazada.vn/zzz"></textarea>
-
-    <div class="controls-row">
-      <div class="left">
-        <label class="toggle"><input type="checkbox" id="useTiny" checked> Rút gọn TinyURL</label>
-        <label class="toggle"><input type="checkbox" id="autoCopy" checked> Tự copy kết quả</label>
-      </div>
-      <div class="right">
-        <button id="btnGenerate" class="primary">Tạo Link Ngay</button>
-        <button id="btnPreview" class="outline">Xem trước</button>
-      </div>
+    <div class="result">
+      <label>Kết quả</label>
+      <textarea id="output" placeholder="Kết quả sẽ hiển thị ở đây..."></textarea>
     </div>
+  </div>
 
-    <div class="config-row">
-      <div class="cfg">
-        <div class="cfg-title">Affiliate IDs (có thể chỉnh):</div>
-        <div class="cfg-grid">
-          <div><label>Shopee ID</label><input id="cfgShopee" value="17351700112"></div>
-          <div><label>Lazada ID</label><input id="cfgLazada" value="218701259"></div>
-          <div><label>Tiki ID</label><input id="cfgTiki" placeholder="(nếu có)"></div>
-          <div><label>TikTok ID</label><input id="cfgTiktok" placeholder="(nếu có)"></div>
-        </div>
-      </div>
-    </div>
+  <script>
+    async function generateLinks() {
+      const input = document.getElementById('input').value.trim();
+      const output = document.getElementById('output');
+      if (!input) return alert('Vui lòng dán link hoặc nội dung cần xử lý.');
 
-    <label for="result">Kết quả</label>
-    <textarea id="result" readonly placeholder="Kết quả sẽ hiển thị ở đây..."></textarea>
+      const lines = input.split(/\n+/);
+      const shopeeId = '17351700112';
+      const lazadaId = '218701259';
+      const tikiId = '';
+      const tiktokId = '';
 
-    <div class="action-row">
-      <button id="btnCopyResult" class="outline" disabled>Sao chép kết quả</button>
-      <button id="btnClear" class="outline">Xóa</button>
-      <div class="status" id="status">Bạn đã tạo 0 link hôm nay 🔗</div>
-    </div>
+      let results = [];
+      for (const line of lines) {
+        const match = line.match(/https?:\/\/[\w\.-]+\S*/);
+        if (!match) {
+          results.push(line);
+          continue;
+        }
+        const url = match[0];
+        let newUrl = url;
 
-    <footer>
-      <small>Powered by Tạo link • Shopee ID: <strong id="shopeeId">17351700112</strong> • Lazada ID: <strong id="lazadaId">218701259</strong></small>
-    </footer>
+        // Shopee
+        if (url.includes('shopee.vn') || url.includes('shp.ee') || url.includes('s.shopee.vn')) {
+          newUrl = url.includes('?') ? `${url}&af_id=${shopeeId}` : `${url}?af_id=${shopeeId}`;
+        }
+        // Lazada
+        else if (url.includes('lazada.vn')) {
+          newUrl = url.includes('?') ? `${url}&aff_id=${lazadaId}` : `${url}?aff_id=${lazadaId}`;
+        }
+        // Tiki
+        else if (url.includes('tiki.vn')) {
+          newUrl = url.includes('?') ? `${url}&aff_id=${tikiId}` : `${url}?aff_id=${tikiId}`;
+        }
+        // TikTok
+        else if (url.includes('tiktok.com')) {
+          newUrl = url.includes('?') ? `${url}&aff_id=${tiktokId}` : `${url}?aff_id=${tiktokId}`;
+        }
 
-  </main>
+        const finalLine = line.replace(url, newUrl);
+        results.push(finalLine);
+      }
 
-  <script src="script.js"></script>
+      output.value = results.join('\n');
+    }
+
+    function copyResult() {
+      const output = document.getElementById('output');
+      output.select();
+      document.execCommand('copy');
+      alert('Đã sao chép kết quả!');
+    }
+  </script>
 </body>
 </html>
