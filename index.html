@@ -92,6 +92,17 @@
   </div>
 
   <script>
+    async function expandShopeeLink(shortUrl) {
+      try {
+        // gọi HEAD để lấy link đích (redirect)
+        const response = await fetch(shortUrl, { method: "HEAD", redirect: "follow" });
+        return response.url || shortUrl;
+      } catch (err) {
+        console.warn("Không expand được:", shortUrl);
+        return shortUrl;
+      }
+    }
+
     async function generateLinks() {
       const input = document.getElementById('input').value.trim();
       const output = document.getElementById('output');
@@ -104,30 +115,47 @@
       const tiktokId = '';
 
       let results = [];
+
       for (const line of lines) {
         const match = line.match(/https?:\/\/[\w\.-]+\S*/);
         if (!match) {
           results.push(line);
           continue;
         }
-        const url = match[0];
+
+        let url = match[0];
         let newUrl = url;
 
-        // Shopee
-        if (url.includes('shopee.vn') || url.includes('shp.ee') || url.includes('s.shopee.vn')) {
-          newUrl = url.includes('?') ? `${url}&af_id=${shopeeId}` : `${url}?af_id=${shopeeId}`;
+        // Shopee link rút gọn
+        if (url.includes('s.shopee.vn') || url.includes('shp.ee')) {
+          const expanded = await expandShopeeLink(url);
+          newUrl = expanded.includes('?')
+            ? `${expanded}&af_id=${shopeeId}`
+            : `${expanded}?af_id=${shopeeId}`;
+        }
+        // Shopee link gốc
+        else if (url.includes('shopee.vn')) {
+          newUrl = url.includes('?')
+            ? `${url}&af_id=${shopeeId}`
+            : `${url}?af_id=${shopeeId}`;
         }
         // Lazada
         else if (url.includes('lazada.vn')) {
-          newUrl = url.includes('?') ? `${url}&aff_id=${lazadaId}` : `${url}?aff_id=${lazadaId}`;
+          newUrl = url.includes('?')
+            ? `${url}&aff_id=${lazadaId}`
+            : `${url}?aff_id=${lazadaId}`;
         }
         // Tiki
         else if (url.includes('tiki.vn')) {
-          newUrl = url.includes('?') ? `${url}&aff_id=${tikiId}` : `${url}?aff_id=${tikiId}`;
+          newUrl = url.includes('?')
+            ? `${url}&aff_id=${tikiId}`
+            : `${url}?aff_id=${tikiId}`;
         }
         // TikTok
         else if (url.includes('tiktok.com')) {
-          newUrl = url.includes('?') ? `${url}&aff_id=${tiktokId}` : `${url}?aff_id=${tiktokId}`;
+          newUrl = url.includes('?')
+            ? `${url}&aff_id=${tiktokId}`
+            : `${url}?aff_id=${tiktokId}`;
         }
 
         const finalLine = line.replace(url, newUrl);
@@ -135,6 +163,7 @@
       }
 
       output.value = results.join('\n');
+      alert('Đã tạo xong link affiliate!');
     }
 
     function copyResult() {
