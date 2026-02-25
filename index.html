@@ -8,9 +8,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
   <main class="container">
     <div class="logo-text">🔗 Tạo link Shopee - Lazada</div>
-    <p class="subtitle">Dán link sản phẩm Shopee hoặc Lazada vào ô bên dưới — hệ thống sẽ tự gắn affiliate ID của bạn.</p>
+    <div class="slogan">Công cụ tạo link affiliate nhanh và tự động nhất!</div>
+    <p class="subtitle">Dán link sản phẩm Shopee hoặc Lazada vào ô bên dưới để tạo link nhận mã giảm giá.</p>
 
     <label for="inputUrl">Link sản phẩm</label>
     <input id="inputUrl" placeholder="Dán link Shopee hoặc Lazada ở đây..." />
@@ -30,12 +32,12 @@
       <button id="shareMessenger" class="link" disabled>Chia sẻ Messenger</button>
     </div>
 
+    <div class="counter" id="counter">Bạn đã tạo 0 link hôm nay 🔗</div>
+
     <footer>
       <small>Powered by Tạo link Shopee - Lazada • Shopee ID: <strong id="shopeeId">17351700112</strong> • Lazada ID: <strong id="lazadaId">218701259</strong></small>
     </footer>
-
   </main>
-
   <script src="script.js"></script>
 </body>
 </html>
