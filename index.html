@@ -73,7 +73,7 @@
   <div class="container">
     <h2>🔗 Tạo link Shopee - Lazada - Tiki - TikTok</h2>
     <p style="text-align:center; color:#3a3a3a; margin-bottom:20px">
-      Công cụ tự động gắn Affiliate ID & rút gọn link (TinyURL).
+      Dán link gốc hoặc link rút gọn — hệ thống tự gắn Affiliate ID & TinyURL.
     </p>
 
     <label for="input">Nơi dán link của bạn</label>
@@ -94,7 +94,6 @@
     const shopeeId = "17351700112";
     const lazadaId = "218701259";
 
-    // Mở rộng link Shopee rút gọn
     async function expandShopeeLink(shortUrl) {
       try {
         const res = await fetch(shortUrl, { method: "HEAD", redirect: "follow" });
@@ -104,16 +103,15 @@
       }
     }
 
-    // Rút gọn link TinyURL
     async function shortenTiny(url) {
       try {
         const res = await fetch("https://api.tinyurl.com/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer 1"
+            Authorization: "Bearer 1",
           },
-          body: JSON.stringify({ url })
+          body: JSON.stringify({ url }),
         });
         const data = await res.json();
         return data.data?.tiny_url || url;
@@ -122,15 +120,10 @@
       }
     }
 
-    // Làm sạch và thay affiliate ID
     function cleanAffiliateParams(url) {
       try {
         const u = new URL(url);
-        u.searchParams.delete("af_id");
-        u.searchParams.delete("aff_id");
-        u.searchParams.delete("utm_source");
-        u.searchParams.delete("utm_medium");
-        u.searchParams.delete("utm_campaign");
+        ["af_id", "aff_id", "utm_source", "utm_medium", "utm_campaign"].forEach(p => u.searchParams.delete(p));
         return u.toString().replace(/(\?|&)$/, "");
       } catch {
         return url;
@@ -161,6 +154,7 @@
           : `${newUrl}?aff_id=${lazadaId}`;
       }
 
+      // Rút gọn link sau khi thêm aff ID
       return await shortenTiny(newUrl);
     }
 
