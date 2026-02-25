@@ -1,26 +1,29 @@
 const SHOPEE_ID = "17351700112";
 const LAZADA_ID = "218701259";
 
+// ✅ Hàm mở rộng link Shopee rút gọn (qua API is.gd để né CORS)
 async function expandShopeeLink(shortUrl) {
   try {
-    const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(shortUrl)}`);
-    const expandedUrl = await response.text();
-    return expandedUrl.includes("http") ? expandedUrl : shortUrl;
+    const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(shortUrl)}`);
+    const longUrl = await res.text();
+    return longUrl.includes("http") ? longUrl : shortUrl;
   } catch {
     return shortUrl;
   }
 }
 
+// ✅ Hàm rút gọn TinyURL
 async function shortenTiny(url) {
   try {
-    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
-    const shortUrl = await res.text();
-    return shortUrl.startsWith("http") ? shortUrl : url;
+    const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`);
+    const tiny = await res.text();
+    return tiny.startsWith("http") ? tiny : url;
   } catch {
     return url;
   }
 }
 
+// ✅ Xóa param affiliate cũ
 function cleanAffiliateParams(url) {
   try {
     const u = new URL(url);
@@ -31,10 +34,10 @@ function cleanAffiliateParams(url) {
   }
 }
 
+// ✅ Thêm aff_id mới
 async function processUrl(url) {
   let newUrl = cleanAffiliateParams(url);
 
-  // Link rút gọn Shopee
   if (newUrl.includes("s.shopee.vn") || newUrl.includes("shp.ee")) {
     const expanded = await expandShopeeLink(newUrl);
     newUrl = cleanAffiliateParams(expanded);
@@ -43,24 +46,20 @@ async function processUrl(url) {
         ? `${newUrl}&af_id=${SHOPEE_ID}`
         : `${newUrl}?af_id=${SHOPEE_ID}`;
     }
-  }
-  // Link Shopee gốc
-  else if (newUrl.includes("shopee.vn")) {
+  } else if (newUrl.includes("shopee.vn")) {
     newUrl = newUrl.includes("?")
       ? `${newUrl}&af_id=${SHOPEE_ID}`
       : `${newUrl}?af_id=${SHOPEE_ID}`;
-  }
-  // Link Lazada
-  else if (newUrl.includes("lazada.vn")) {
+  } else if (newUrl.includes("lazada.vn")) {
     newUrl = newUrl.includes("?")
       ? `${newUrl}&aff_id=${LAZADA_ID}`
       : `${newUrl}?aff_id=${LAZADA_ID}`;
   }
 
-  // Sau khi gắn aff → rút gọn lại
   return await shortenTiny(newUrl);
 }
 
+// ✅ Xử lý toàn bộ văn bản
 async function generateLinks() {
   const input = document.getElementById("input").value.trim();
   const output = document.getElementById("output");
@@ -84,6 +83,7 @@ async function generateLinks() {
   output.value = results.join("\n");
 }
 
+// ✅ Copy kết quả
 function copyResult() {
   const output = document.getElementById("output");
   output.select();
