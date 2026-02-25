@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tạo link Shopee - Lazada - Tiki - TikTok</title>
-  <link rel="icon" href="favicon.ico" />
+  <title>Tạo link Affiliate - Shopee / Lazada / Tiki / TikTok</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, sans-serif;
       background-color: #eaf5f2;
       display: flex;
       justify-content: center;
@@ -18,7 +17,7 @@
     .container {
       background: white;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       padding: 28px 32px;
       width: 90%;
       max-width: 750px;
@@ -74,7 +73,7 @@
   <div class="container">
     <h2>🔗 Tạo link Shopee - Lazada - Tiki - TikTok</h2>
     <p style="text-align:center; color:#3a3a3a; margin-bottom:20px">
-      Công cụ tạo link affiliate nhanh, hỗ trợ nhiều dòng & giữ nguyên mô tả.
+      Công cụ tự động gắn Affiliate ID & rút gọn link (TinyURL).
     </p>
 
     <label for="input">Nơi dán link của bạn</label>
@@ -92,28 +91,84 @@
   </div>
 
   <script>
+    const shopeeId = "17351700112";
+    const lazadaId = "218701259";
+    const tikiId = "";
+    const tiktokId = "";
+
     async function expandShopeeLink(shortUrl) {
       try {
-        // gọi HEAD để lấy link đích (redirect)
-        const response = await fetch(shortUrl, { method: "HEAD", redirect: "follow" });
-        return response.url || shortUrl;
-      } catch (err) {
-        console.warn("Không expand được:", shortUrl);
+        const res = await fetch(shortUrl, { method: "HEAD", redirect: "follow" });
+        return res.url || shortUrl;
+      } catch {
         return shortUrl;
       }
     }
 
+    async function shortenTiny(url) {
+      try {
+        const res = await fetch(
+          "https://api.tinyurl.com/create",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer 1", // dùng API free của TinyURL
+            },
+            body: JSON.stringify({ url }),
+          }
+        );
+        const data = await res.json();
+        return data.data?.tiny_url || url;
+      } catch {
+        return url;
+      }
+    }
+
+    async function processUrl(url) {
+      let newUrl = url;
+
+      // Shopee rút gọn
+      if (url.includes("s.shopee.vn") || url.includes("shp.ee")) {
+        const expanded = await expandShopeeLink(url);
+        newUrl = expanded.includes("?")
+          ? `${expanded}&af_id=${shopeeId}`
+          : `${expanded}?af_id=${shopeeId}`;
+      }
+      // Shopee gốc
+      else if (url.includes("shopee.vn")) {
+        newUrl = url.includes("?")
+          ? `${url}&af_id=${shopeeId}`
+          : `${url}?af_id=${shopeeId}`;
+      }
+      // Lazada
+      else if (url.includes("lazada.vn")) {
+        newUrl = url.includes("?")
+          ? `${url}&aff_id=${lazadaId}`
+          : `${url}?aff_id=${lazadaId}`;
+      }
+      // Tiki
+      else if (url.includes("tiki.vn")) {
+        newUrl = url.includes("?")
+          ? `${url}&aff_id=${tikiId}`
+          : `${url}?aff_id=${tikiId}`;
+      }
+      // TikTok
+      else if (url.includes("tiktok.com")) {
+        newUrl = url.includes("?")
+          ? `${url}&aff_id=${tiktokId}`
+          : `${url}?aff_id=${tiktokId}`;
+      }
+
+      return await shortenTiny(newUrl);
+    }
+
     async function generateLinks() {
-      const input = document.getElementById('input').value.trim();
-      const output = document.getElementById('output');
-      if (!input) return alert('Vui lòng dán link hoặc nội dung cần xử lý.');
+      const input = document.getElementById("input").value.trim();
+      const output = document.getElementById("output");
+      if (!input) return;
 
       const lines = input.split(/\n+/);
-      const shopeeId = '17351700112';
-      const lazadaId = '218701259';
-      const tikiId = '';
-      const tiktokId = '';
-
       let results = [];
 
       for (const line of lines) {
@@ -123,54 +178,18 @@
           continue;
         }
 
-        let url = match[0];
-        let newUrl = url;
-
-        // Shopee link rút gọn
-        if (url.includes('s.shopee.vn') || url.includes('shp.ee')) {
-          const expanded = await expandShopeeLink(url);
-          newUrl = expanded.includes('?')
-            ? `${expanded}&af_id=${shopeeId}`
-            : `${expanded}?af_id=${shopeeId}`;
-        }
-        // Shopee link gốc
-        else if (url.includes('shopee.vn')) {
-          newUrl = url.includes('?')
-            ? `${url}&af_id=${shopeeId}`
-            : `${url}?af_id=${shopeeId}`;
-        }
-        // Lazada
-        else if (url.includes('lazada.vn')) {
-          newUrl = url.includes('?')
-            ? `${url}&aff_id=${lazadaId}`
-            : `${url}?aff_id=${lazadaId}`;
-        }
-        // Tiki
-        else if (url.includes('tiki.vn')) {
-          newUrl = url.includes('?')
-            ? `${url}&aff_id=${tikiId}`
-            : `${url}?aff_id=${tikiId}`;
-        }
-        // TikTok
-        else if (url.includes('tiktok.com')) {
-          newUrl = url.includes('?')
-            ? `${url}&aff_id=${tiktokId}`
-            : `${url}?aff_id=${tiktokId}`;
-        }
-
-        const finalLine = line.replace(url, newUrl);
-        results.push(finalLine);
+        const url = match[0];
+        const shortLink = await processUrl(url);
+        results.push(line.replace(url, shortLink));
       }
 
-      output.value = results.join('\n');
-      alert('Đã tạo xong link affiliate!');
+      output.value = results.join("\n");
     }
 
     function copyResult() {
-      const output = document.getElementById('output');
+      const output = document.getElementById("output");
       output.select();
-      document.execCommand('copy');
-      alert('Đã sao chép kết quả!');
+      document.execCommand("copy");
     }
   </script>
 </body>
